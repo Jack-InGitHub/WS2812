@@ -28,11 +28,11 @@ void WS2812_Show(void);
 
 
 /**
- * @brief uint8 RGB ×ª uint32
+ * @brief uint8 RGB è½¬ uint32
  * 
- * @param red 
- * @param green 
- * @param blue 
+ * @param red    [0,255]
+ * @param green  [0,255]
+ * @param blue   [0,255]
  * @return uint32_t 
  */
 uint32_t WS2812_Color(uint8_t red, uint8_t green, uint8_t blue)
@@ -41,12 +41,12 @@ uint32_t WS2812_Color(uint8_t red, uint8_t green, uint8_t blue)
 }
 
 /**
- * @brief ÉèÖÃÄ³Ò»¸öWS2812
+ * @brief è®¾ç½®æŸä¸€ä¸ªWS2812
  * 
- * @param num 
+ * @param num [0,WS2812_NUM]  WS2812_NUM<65536
  * @param RGB 
  */
-void WS2812_OneSet( uint8_t num, uint32_t RGB )
+void WS2812_OneSet( uint16_t num, uint32_t RGB )
 {
     uint8_t i;
     uint32_t TempR = 0, TempG = 0, TempB = 0;
@@ -68,7 +68,7 @@ void WS2812_OneSet( uint8_t num, uint32_t RGB )
 }
 
 /**
- * @brief   ½«Êı¾İÍ¨¹ıDMA·¢ËÍÈ¥WS2812
+ * @brief   å°†æ•°æ®é€šè¿‡DMAå‘é€å»WS2812
  * 
  */
 void WS2812_Show(void)
@@ -77,7 +77,7 @@ void WS2812_Show(void)
 }
 
 /**
- * @brief   ¹Ø±ÕËùÓĞµÄWS2812
+ * @brief   å…³é—­æ‰€æœ‰çš„WS2812
  * 
  */
 void WS2812_CloseAll(void)
@@ -92,7 +92,7 @@ void WS2812_CloseAll(void)
 }
 
 /**
- * @brief   ¸øËùÓĞµÄWS2812Éè¶¨Ä³Ò»¸öÑÕÉ«
+ * @brief   ç»™æ‰€æœ‰çš„WS2812è®¾å®šæŸä¸€ä¸ªé¢œè‰²
  * 
  * @param RGB 
  */
@@ -107,7 +107,13 @@ void WS2812_SetAll(uint32_t RGB)
     WS2812_Show();
 }
 
-// Fill the dots one after the other with a color
+
+/**
+ * @brief  Fill the dots one after the other with a color
+ * 
+ * @param  c:RGB color
+ * @param  wait:wait time
+ */
 void WS2812_ColorWipe(uint32_t c, uint16_t wait)
 {
     for (uint16_t i = 0; i < WS2812_NUM; i++)
@@ -118,8 +124,12 @@ void WS2812_ColorWipe(uint32_t c, uint16_t wait)
     }
 }
 
-// Input a value 0 to 255 to get a color value.
-// The colours are a transition r - g - b - back to r.
+/**
+ * @brief Input a value 0 to 255 to get a color value. The colours are a transition r - g - b - back to r.
+ * @param wheelPos 
+ * @return uint32
+ * 
+ */
 uint32_t WS2812_Wheel(uint8_t wheelPos)
 {
     wheelPos = 255 - wheelPos;
@@ -136,6 +146,12 @@ uint32_t WS2812_Wheel(uint8_t wheelPos)
     return WS2812_Color(wheelPos * 3, 255 - wheelPos * 3, 0);
 }
 
+/**
+ * @brief Input a value 0 to 255 to get a color value. The colours are a transition r - g - b - back to r.
+ * @param waittime 
+ * @return 
+ * 
+ */
 void WS2812_SingleBreatheRainbow(uint16_t wait)
 {
     uint16_t i, j;
@@ -151,7 +167,12 @@ void WS2812_SingleBreatheRainbow(uint16_t wait)
     }
 }
 
-// Slightly different, this makes the rainbow equally distributed throughout
+/**
+ * @brief Slightly different, this makes the rainbow equally distributed throughout
+ * @param waittime 
+ * @return 
+ * 
+ */
 void  WS2812_RainbowRotate(uint16_t wait)
 {
     uint16_t i, j;
@@ -167,7 +188,12 @@ void  WS2812_RainbowRotate(uint16_t wait)
     }
 }
 
-//Theatre-style crawling lights.
+/**
+ * @brief  Fill the dots one after the other with a color
+ * 
+ * @param  c:RGB color
+ * @param  wait:wait time
+ */
 void WS2812_TheaterChase(uint32_t c, uint16_t wait)
 {
     for (int j = 0; j < 10; j++)            //do 10 cycles of chasing
@@ -190,7 +216,11 @@ void WS2812_TheaterChase(uint32_t c, uint16_t wait)
     }
 }
 
-//Theatre-style crawling lights with rainbow effect
+/**
+ * @brief  Theatre-style crawling lights with rainbow effect
+ * 
+ * @param  wait:wait time
+ */
 void WS2812_TheaterChaseRainbow(uint16_t wait)
 {
     for (int j = 0; j < 256; j++)           // cycle all 256 colors in the wheel
@@ -213,7 +243,13 @@ void WS2812_TheaterChaseRainbow(uint16_t wait)
     }
 }
 
-void WS2812_RandAll(uint16_t wait)
+/**
+ * @brief  set rand color of all ws2812
+ * 
+ * @param  wait:wait time
+ * @param  times:flash times
+ */
+void WS2812_RandAll(uint16_t wait,uint16_t times)
 {
     uint16_t i;
     
@@ -224,12 +260,17 @@ void WS2812_RandAll(uint16_t wait)
     }
 }
 
+/**
+ * @brief  set rand color one by one
+ * 
+ * @param  wait:wait time
+ */
 void WS2812_RandColorWipe(uint16_t wait)
 {
     uint16_t i,j;
     uint32_t temp32[WS2812_NUM]={0};
     
-    for (i = 0; i < 255; i++)
+    for (i = 0; i < WS2812_NUM; i++)
     {
         temp32[0] = rand()%0x01000000;
         for (j = WS2812_NUM-1; j > 0; --j)
