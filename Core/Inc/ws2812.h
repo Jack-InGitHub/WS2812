@@ -21,16 +21,16 @@ extern "C" {
 #include <stdlib.h>
 
 /* Define --------------------------------------------------------------------*/
-//Ó²¼şspiÄ£Äâws2811Ê±Ğò£¨ÓÃspiµÄ3Î»Êı¾İÄ£Äâws281xµÄÒ»Î»Êı¾İ£©
-//Òª½«ÏµÍ³Ê±ÖÓÉèÖÃÎª72M£¬·ÖÆµÊıÉèÖÃÎª32£¬ÔòSPIµÄÍ¨ĞÅÆµÂÊÎª2.25M£¬´«ÊäÒ»Î»Êı¾İµÄÊ±¼äÔ¼Îª444ÄÉÃë£¨ns£©
-//444ns   888ns  ·ûºÏWS281XĞ¾Æ¬µÄÍ¨ĞÅÊ±Ğò¡£
+//ç¡¬ä»¶spiæ¨¡æ‹Ÿws2811æ—¶åºï¼ˆç”¨spiçš„3ä½æ•°æ®æ¨¡æ‹Ÿws281xçš„ä¸€ä½æ•°æ®ï¼‰
+//è¦å°†ç³»ç»Ÿæ—¶é’Ÿè®¾ç½®ä¸º72Mï¼Œåˆ†é¢‘æ•°è®¾ç½®ä¸º32ï¼Œåˆ™SPIçš„é€šä¿¡é¢‘ç‡ä¸º2.25Mï¼Œä¼ è¾“ä¸€ä½æ•°æ®çš„æ—¶é—´çº¦ä¸º444çº³ç§’ï¼ˆnsï¼‰
+//444ns   888ns  ç¬¦åˆWS281XèŠ¯ç‰‡çš„é€šä¿¡æ—¶åºã€‚
 //  __
 // |  |_|   0b110  high level
 //  _   
 // | |__|   0b100  low level
 #define WS2812_HIG  (0x06)
 #define WS2812_LOW  (0x04)
-//WS2812µÄÊıÁ¿
+//WS2812çš„æ•°é‡
 #define WS2812_NUM   8
 /* typedef -------------------------------------------------------------------*/
 typedef struct
@@ -59,14 +59,14 @@ typedef struct
 } ws2812_t;
 
 /* types ---------------------------------------------------------------------*/
-extern ws2812_t g_ws2812;
+//extern ws2812_t g_ws2812;
 
 /* macro ---------------------------------------------------------------------*/
 
 
 /* functions -----------------------------------------------------------------*/
 uint32_t WS2812_Color(uint8_t red, uint8_t green, uint8_t blue);
-void WS2812_OneSet( uint8_t num, uint32_t RGB );
+void WS2812_OneSet( uint16_t num, uint32_t RGB );
 
 void WS2812_CloseAll(void);
 void WS2812_SetAll(uint32_t RGB);
@@ -79,7 +79,7 @@ void WS2812_RainbowRotate(uint16_t wait);
 void WS2812_TheaterChase(uint32_t c, uint16_t wait);
 void WS2812_TheaterChaseRainbow(uint16_t wait);
 
-void WS2812_RandAll(uint16_t wait);
+void WS2812_RandAll(uint16_t wait,uint16_t times);
 void WS2812_RandColorWipe(uint16_t wait);
 
 #ifdef __cplusplus
