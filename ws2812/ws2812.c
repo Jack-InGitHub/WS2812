@@ -2,26 +2,33 @@
  * @file    ws2812.c
  * @author  Frank (pq_liu@foxmail.com)
  * @brief   WS2812 Driver
- * @version 0.1
- * @date    2021-01-16
+ * @version 0.0.3
+ * @date    2022-07-10
  * 
- * @copyright Copyright (c) 2021
- * 
+ * @section   History
+ * <table>
+ *     <tr><th>Version <th>Data        <th>Author   <th>Notes
+ *     <tr><td>V0.0.1  <td>2021-01-16  <td>PQ       <td>First Version
+ *     <tr><td>V0.0.2  <td>2022-07-07  <td>adadKKKX <td>fix WS2812_NUM
+ *     <tr><td>V0.0.3  <td>2022-07-10  <td>PQ       <td>add comments & Remove some useless code
+ * </table>
  */
 /* Includes ------------------------------------------------------------------*/
 #include "ws2812.h"
 
 
 /* Define --------------------------------------------------------------------*/
-#define delay_ms(x)                 HAL_Delay(x)
+// Please modify the code here if you port it.
+// 移植的时候记得修改这些宏
+#define delay_ms(x)                     HAL_Delay(x)
+#define SPI_TRANSMIT(buf, size)         HAL_SPI_Transmit_DMA(&hspi1, (buf), (size));
 
 /* Variables -----------------------------------------------------------------*/
-extern SPI_HandleTypeDef hspi1;
-extern DMA_HandleTypeDef hdma_spi1_tx;
+extern SPI_HandleTypeDef                hspi1;
 
-ws2812_t g_ws2812={0};
+static ws2812_t ws2812={0};
 /* Functions Prototypes ------------------------------------------------------*/
-void WS2812_Show(void);
+static __inline void WS2812_Show(void);
 
 
 /* Functions -----------------------------------------------------------------*/
@@ -33,7 +40,7 @@ void WS2812_Show(void);
  * @param red    [0,255]
  * @param green  [0,255]
  * @param blue   [0,255]
- * @return uint32_t 
+ * @return uint32_t RGB value
  */
 uint32_t WS2812_Color(uint8_t red, uint8_t green, uint8_t blue)
 {
@@ -44,7 +51,7 @@ uint32_t WS2812_Color(uint8_t red, uint8_t green, uint8_t blue)
  * @brief 设置某一个WS2812
  * 
  * @param num [0,WS2812_NUM]  WS2812_NUM<65536
- * @param RGB 
+ * @param RGB Uint32 RGB value
  */
 void WS2812_OneSet( uint16_t num, uint32_t RGB )
 {
@@ -61,19 +68,19 @@ void WS2812_OneSet( uint16_t num, uint32_t RGB )
 
     for (i = 0; i < 3; i++)
     {
-        g_ws2812.Col[num].RGB.R[i] = TempR >> (16-8*i);
-        g_ws2812.Col[num].RGB.G[i] = TempG >> (16-8*i);
-        g_ws2812.Col[num].RGB.B[i] = TempB >> (16-8*i);
+        ws2812.Col[num].RGB.R[i] = TempR >> (16-8*i);
+        ws2812.Col[num].RGB.G[i] = TempG >> (16-8*i);
+        ws2812.Col[num].RGB.B[i] = TempB >> (16-8*i);
     }
 }
 
 /**
- * @brief   将数据通过DMA发送去WS2812
+ * @brief   将数据通过DMA发送到WS2812
  * 
  */
-void WS2812_Show(void)
+static __inline void WS2812_Show(void)
 {
-    HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)&g_ws2812.Col[0].Buff, 9*WS2812_NUM);
+    SPI_TRANSMIT( (uint8_t*)&ws2812.Col[0].Buff[0], 9*WS2812_NUM );
 }
 
 /**
@@ -94,7 +101,7 @@ void WS2812_CloseAll(void)
 /**
  * @brief   给所有的WS2812设定某一个颜色
  * 
- * @param RGB 
+ * @param RGB Uint32 RGB value
  */
 void WS2812_SetAll(uint32_t RGB)
 {
@@ -111,14 +118,14 @@ void WS2812_SetAll(uint32_t RGB)
 /**
  * @brief  Fill the dots one after the other with a color
  * 
- * @param  c:RGB color
- * @param  wait:wait time
+ * @param  RGB:Uint32 RGB value
+ * @param  wait:wait time(ms)
  */
-void WS2812_ColorWipe(uint32_t c, uint16_t wait)
+void WS2812_ColorWipe(uint32_t RGB, uint16_t wait)
 {
     for (uint16_t i = 0; i < WS2812_NUM; i++)
     {
-        WS2812_OneSet(i, c);
+        WS2812_OneSet(i, RGB);
         WS2812_Show();
         delay_ms(wait);
     }
@@ -148,7 +155,7 @@ uint32_t WS2812_Wheel(uint8_t wheelPos)
 
 /**
  * @brief Input a value 0 to 255 to get a color value. The colours are a transition r - g - b - back to r.
- * @param waittime 
+ * @param wait  wait time(ms)
  * @return 
  * 
  */
@@ -168,8 +175,8 @@ void WS2812_SingleBreatheRainbow(uint16_t wait)
 }
 
 /**
- * @brief Slightly different, this makes the rainbow equally distributed throughout
- * @param waittime 
+ * @brief this makes the rainbow equally distributed throughout
+ * @param wait  wait time(ms)
  * @return 
  * 
  */
@@ -178,7 +185,8 @@ void  WS2812_RainbowRotate(uint16_t wait)
     uint16_t i, j;
 
     for (j = 0; j < 256 * 5; j++)
-    { // 5 cycles of all colors on wheel
+    {   
+        // 5 cycles of all colors on wheel
         for (i = 0; i < WS2812_NUM; i++)
         {
             WS2812_OneSet(i, WS2812_Wheel(((i * 256 / WS2812_NUM) + j) & 255));
@@ -191,10 +199,10 @@ void  WS2812_RainbowRotate(uint16_t wait)
 /**
  * @brief  Fill the dots one after the other with a color
  * 
- * @param  c:RGB color
- * @param  wait:wait time
+ * @param  RGB:Uint32 RGB value
+ * @param  wait:wait time(ms)
  */
-void WS2812_TheaterChase(uint32_t c, uint16_t wait)
+void WS2812_TheaterChase(uint32_t RGB, uint16_t wait)
 {
     for (int j = 0; j < 10; j++)            //do 10 cycles of chasing
     { 
@@ -202,7 +210,7 @@ void WS2812_TheaterChase(uint32_t c, uint16_t wait)
         {
             for (uint16_t i = 0; i < WS2812_NUM; i = i + 4)
             {
-                WS2812_OneSet(i + q, c);    //turn x pixel on
+                WS2812_OneSet(i + q, RGB);  //turn x pixel on
             }
             WS2812_Show();
 
@@ -219,11 +227,11 @@ void WS2812_TheaterChase(uint32_t c, uint16_t wait)
 /**
  * @brief  Theatre-style crawling lights with rainbow effect
  * 
- * @param  wait:wait time
+ * @param  wait:wait time(ms)
  */
 void WS2812_TheaterChaseRainbow(uint16_t wait)
 {
-    for (int j = 0; j < 256; j++)           // cycle all 256 colors in the wheel
+    for (int j = 0; j < 256; j++)                                   // cycle all 256 colors in the wheel
     { 
         for (int q = 0; q < 4; q++)
         {
@@ -246,14 +254,14 @@ void WS2812_TheaterChaseRainbow(uint16_t wait)
 /**
  * @brief  set rand color of all ws2812
  * 
- * @param  wait:wait time
+ * @param  wait:wait time(ms)
  * @param  times:flash times
  */
 void WS2812_RandAll(uint16_t wait,uint16_t times)
 {
     uint16_t i;
     
-    for (i = 0; i < 125; i++)
+    for (i = 0; i < times; i++)
     {
         WS2812_SetAll(rand()%0x01000000);
         delay_ms(wait);
@@ -263,7 +271,7 @@ void WS2812_RandAll(uint16_t wait,uint16_t times)
 /**
  * @brief  set rand color one by one
  * 
- * @param  wait:wait time
+ * @param  wait:wait time(ms)
  */
 void WS2812_RandColorWipe(uint16_t wait)
 {
