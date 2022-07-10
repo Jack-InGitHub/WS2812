@@ -1,4 +1,4 @@
-# WS2812
+# WS2812 V0.1.0
 
 # History
 
@@ -7,6 +7,7 @@
 | V0.0.1  | 2021-01-16 | PQ       | First Version                                                |
 | V0.0.2  | 2022-07-07 | adadKKKX | fix WS2812_NUM                                               |
 | V0.0.3  | 2022-07-10 | PQ       | add comments <br>Remove some useless code <br>modify README to add Preface<br>Modify the directory of the project |
+| V0.1.0  | 2022-07-11 | PQ       | Modifying version Information                                |
 
 
 
