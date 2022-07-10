@@ -119,7 +119,7 @@ int main(void)
 
         WS2812_TheaterChaseRainbow(100);
         
-        WS2812_RandAll(200);
+        WS2812_RandAll(200, 100);
         WS2812_RandColorWipe(200);
         /* USER CODE BEGIN 3 */
     }

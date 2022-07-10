@@ -1,0 +1,25 @@
+--cpu Cortex-M3
+"ws2812\startup_stm32f103xb.o"
+"ws2812\main.o"
+"ws2812\stm32f1xx_it.o"
+"ws2812\stm32f1xx_hal_msp.o"
+"ws2812\stm32f1xx_hal_gpio_ex.o"
+"ws2812\stm32f1xx_hal_spi.o"
+"ws2812\stm32f1xx_hal.o"
+"ws2812\stm32f1xx_hal_rcc.o"
+"ws2812\stm32f1xx_hal_rcc_ex.o"
+"ws2812\stm32f1xx_hal_gpio.o"
+"ws2812\stm32f1xx_hal_dma.o"
+"ws2812\stm32f1xx_hal_cortex.o"
+"ws2812\stm32f1xx_hal_pwr.o"
+"ws2812\stm32f1xx_hal_flash.o"
+"ws2812\stm32f1xx_hal_flash_ex.o"
+"ws2812\stm32f1xx_hal_exti.o"
+"ws2812\stm32f1xx_hal_tim.o"
+"ws2812\stm32f1xx_hal_tim_ex.o"
+"ws2812\system_stm32f1xx.o"
+"ws2812\ws2812.o"
+--library_type=microlib --strict --scatter "WS2812\WS2812.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "WS2812.map" -o WS2812\WS2812.axf
