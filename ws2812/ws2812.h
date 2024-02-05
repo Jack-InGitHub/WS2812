@@ -38,8 +38,9 @@ extern "C" {
 /* typedef -------------------------------------------------------------------*/
 /**
  * @brief WS2812 date obj
- * 
+ * @attention 需要注意字节序问题，适用于小端序
  */
+// TODO 做好大小端兼容
 typedef struct
 {
     uint32_t Info;                      //reserve

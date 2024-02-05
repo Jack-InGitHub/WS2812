@@ -56,6 +56,7 @@ uint32_t WS2812_Color(uint8_t red, uint8_t green, uint8_t blue)
 void WS2812_OneSet( uint16_t num, uint32_t RGB )
 {
     uint8_t i;
+    // 这里存放的是真实的编码数据 只使用了 3bit*8=24bit
     uint32_t TempR = 0, TempG = 0, TempB = 0;
 
     //MSB First
@@ -65,7 +66,8 @@ void WS2812_OneSet( uint16_t num, uint32_t RGB )
         (RGB & 0x00000100) != 0 ? (TempG |= (WS2812_HIG<<(i*3))) : (TempG |= (WS2812_LOW<<(i*3)));
         (RGB & 0x00000001) != 0 ? (TempB |= (WS2812_HIG<<(i*3))) : (TempB |= (WS2812_LOW<<(i*3)));
     }
-
+    
+    // TODO 这一块有待优化
     for (i = 0; i < 3; i++)
     {
         ws2812.Col[num].RGB.R[i] = TempR >> (16-8*i);
@@ -153,6 +155,9 @@ uint32_t WS2812_Wheel(uint8_t wheelPos)
     return WS2812_Color(wheelPos * 3, 255 - wheelPos * 3, 0);
 }
 
+
+// TODO 全彩色的 wheel
+
 /**
  * @brief Input a value 0 to 255 to get a color value. The colours are a transition r - g - b - back to r.
  * @param wait  wait time(ms)
@@ -204,9 +209,9 @@ void  WS2812_RainbowRotate(uint16_t wait)
  */
 void WS2812_TheaterChase(uint32_t RGB, uint16_t wait)
 {
-    for (int j = 0; j < 10; j++)            //do 10 cycles of chasing
+    for (uint16_t j = 0; j < 10; j++)       //do 10 cycles of chasing
     { 
-        for (int q = 0; q < 4; q++)
+        for (uint16_t q = 0; q < 4; q++)
         {
             for (uint16_t i = 0; i < WS2812_NUM; i = i + 4)
             {
@@ -231,9 +236,9 @@ void WS2812_TheaterChase(uint32_t RGB, uint16_t wait)
  */
 void WS2812_TheaterChaseRainbow(uint16_t wait)
 {
-    for (int j = 0; j < 256; j++)                                   // cycle all 256 colors in the wheel
+    for (uint16_t j = 0; j < 256; j++)                              // cycle all 256 colors in the wheel
     { 
-        for (int q = 0; q < 4; q++)
+        for (uint16_t q = 0; q < 4; q++)
         {
             for (uint16_t i = 0; i < WS2812_NUM; i = i + 4)
             {
